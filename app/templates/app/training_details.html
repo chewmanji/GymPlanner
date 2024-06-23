@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% extends 'app/base.html' %}
+{% block content %}
+{% if user_exercises %}
+    <table>
+        <thead>
+            <tr>
+                <th>Exercise</th>
+                <th>Sets Number</th>
+                <th>Reps Number</th>
+                <th>Tempo</th>
+                <th>Weight</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user_exercise in user_exercises %}
+                <tr>
+                    <td>{{ user_exercise.exercise.name }}</td>
+                    <td>{{ user_exercise.setsNumber }}</td>
+                    <td>{{ user_exercise.repsNumber }}</td>
+                    <td>{{ user_exercise.tempo }}</td>
+                    <td>{{ user_exercise.weight }}</td>
+                    <td>{{ user_exercise.notes }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>You haven't added any exercises to the training yet.</p>
+{% endif %}
+{% endblock content %}
+</body>
+</html>

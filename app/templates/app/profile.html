@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+    {% extends 'app/base.html' %}
+    {% block content %}
+    <h2>Profile</h2>
+    <p>Welcome, {{ user.email }}</p>
+    <a href="{% url 'account_logout' %}">Logout</a>
+    {% endblock content %}
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create your exercise</title>
+</head>
+<body>
+{% extends "app/base.html" %}
+
+{% block content %}
+    <form action="" method="post">
+        <h2>{{ exercise.name }}</h2>
+        {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Submit"/>
+    </form>
+{% endblock %}
+</body>
+</html>
