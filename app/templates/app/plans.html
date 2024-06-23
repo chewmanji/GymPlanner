@@ -7,7 +7,30 @@
 <body>
 {% extends 'app/base.html' %}
 {% block content %}
-
+    {% if plans %}
+        <table>
+            <thead>
+            <tr>
+                <th>Plan</th>
+                <th>Start date</th>
+                <th>Estimated end date</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for plan in plans %}
+                <tr>
+                    <td>{{ plan.name }}</td>
+                    <td>{{ plan.start_date }}</td>
+                    <td>{{ plan.end_date }}</td>
+                    <td><a href="{% url 'app:plan_details' plan.id %}">Details</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You haven't added any plans yet.</p>
+    {% endif %}
+    <a href={% url 'app:create_plan' %}>Create plan</a>
 {% endblock content %}
 </body>
 </html>

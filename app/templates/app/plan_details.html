@@ -2,37 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Trainings</title>
+    <title>Plan details</title>
 </head>
 <body>
 {% extends 'app/base.html' %}
 {% block content %}
-    {% if trainings %}
-        <table>
-            <thead>
+{% if trainings %}
+    <table>
+        <thead>
             <tr>
                 <th>Training</th>
                 <th>Type</th>
-                <th>Day</th>
+                <th>Weekday</th>
             </tr>
-            </thead>
-            <tbody>
+        </thead>
+        <tbody>
             {% for training in trainings %}
                 <tr>
                     <td>{{ training.name }}</td>
                     <td>{{ training.type }}</td>
                     <td>{{ training.get_weekday_display }}</td>
                     <td><a href="{% url 'app:training_details' training.id %}">Details</a></td>
-                    <td><a href="{% url 'app:update_training' training.id %}">Edit</a></td>
                 </tr>
             {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>You haven't added any trainings yet.</p>
-    {% endif %}
-    <a href={% url 'app:create_training' %}>Create training</a>
+        </tbody>
+    </table>
+{% else %}
+    <p>You haven't added any trainings to the plan yet.</p>
+{% endif %}
 {% endblock content %}
-
 </body>
 </html>
