@@ -2,22 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Your exercises</title>
 </head>
 <body>
 {% extends 'app/base.html' %}
 {% block content %}
-    <h2>{{ training.name }}</h2>
     {% if user_exercises %}
+        <h1>Your exercises</h1>
         <table>
             <thead>
             <tr>
-                <th>Exercise</th>
-                <th>Sets Number</th>
-                <th>Reps Number</th>
-                <th>Tempo</th>
+                <th>Name</th>
+                <th>Sets</th>
+                <th>Reps</th>
                 <th>Weight</th>
-                <th>Notes</th>
+                <th>Tempo</th>
             </tr>
             </thead>
             <tbody>
@@ -28,21 +27,20 @@
                     <td>{{ user_exercise.repsNumber }}</td>
                     <td>{{ user_exercise.tempo }}</td>
                     <td>{{ user_exercise.weight }}</td>
-                    <td>{{ user_exercise.notes }}</td>
                     <td>
                         <a href="{% url 'app:update_userexercise' user_exercise.id %}">Edit</a>
                     </td>
                     <td>
-                        <a class="delete" href="{% url 'app:remove_userexercise_from_training' training.id user_exercise.id %}">Remove</a>
+                        <a class="delete" href="{% url 'app:delete_userexercise' user_exercise.id %}">Delete</a>
                     </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <p>You haven't added any exercises to the training yet.</p>
+        <p>You haven't created any exercises yet.</p>
     {% endif %}
-    <a href="{% url 'app:userexercise_list' %}">Add exercise</a>
+    <a href="{% url 'app:exercise_list' %}">Go to exercises</a>
 {% endblock content %}
 </body>
 </html>

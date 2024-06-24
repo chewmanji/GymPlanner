@@ -2,24 +2,6 @@
 <html lang="en">
 <head>
     <title>Exercise Detail</title>
-    <style>
-        table {
-            width: 50%;
-            border-collapse: collapse;
-            margin: 25px 0;
-            font-size: 18px;
-            text-align: left;
-        }
-
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
 </head>
 <body>
 {% extends 'app/base.html' %}
@@ -43,9 +25,10 @@
         <h2>Exercise Video</h2>
         <iframe
                 src="https://www.youtube.com/embed/{{ exercise.youtube_url|cut:'https://www.youtube.com/watch?v=' }}"
-                frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
+                allowfullscreen
+                width="1280"
+                height="720">
         </iframe>
     {% endif %}
 {% endblock content %}

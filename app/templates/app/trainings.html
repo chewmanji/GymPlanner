@@ -22,8 +22,15 @@
                     <td>{{ training.name }}</td>
                     <td>{{ training.type }}</td>
                     <td>{{ training.get_weekday_display }}</td>
-                    <td><a href="{% url 'app:training_details' training.id %}">Details</a></td>
-                    <td><a href="{% url 'app:update_training' training.id %}">Edit</a></td>
+                    <td>
+                        <a href="{% url 'app:training_details' training.id %}">Details</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'app:update_training' training.id %}">Edit</a>
+                    </td>
+                    <td>
+                        <a class="delete" href="{% url 'app:delete_training' training.id %}">Delete</a>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

@@ -22,7 +22,15 @@
                     <td>{{ plan.name }}</td>
                     <td>{{ plan.start_date }}</td>
                     <td>{{ plan.end_date }}</td>
-                    <td><a href="{% url 'app:plan_details' plan.id %}">Details</a></td>
+                    <td>
+                        <a href="{% url 'app:plan_details' plan.id %}">Details</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'app:update_plan' plan.id %}">Edit</a>
+                    </td>
+                    <td>
+                        <a class="delete" href="{% url 'app:delete_plan' plan.id%}">Delete</a>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

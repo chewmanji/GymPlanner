@@ -1,0 +1,73 @@
+/* static/css/theme.css */
+:root {
+    --primary-color: #1abc9c; /* Example primary color */
+    --secondary-color: #e74c3c; /* Example secondary color */
+    --background-color: #2c3e50; /* Example background color */
+    --text-color: #ecf0f1; /* Example text color */
+    --navbar-bg-color: #34495e; /* Navbar background color */
+    --navbar-text-color: #ecf0f1; /* Navbar text color */
+    --link-color: #1abc9c; /* Link color */
+    --link-hover-color: #16a085; /* Link hover color */
+}
+
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif;
+}
+
+.navbar {
+    background-color: var(--navbar-bg-color);
+    color: var(--navbar-text-color);
+}
+
+.navbar .nav-link {
+    color: var(--navbar-text-color);
+}
+
+.navbar .nav-link:hover {
+    color: var(--link-hover-color);
+}
+
+.navbar-toggler-icon {
+    background-color: var(--primary-color); /* Use your primary color for contrast */
+}
+
+
+a {
+    color: var(--link-color);
+}
+
+a:hover {
+    color: var(--link-hover-color);
+}
+
+.table {
+    background-color: var(--background-color);
+}
+
+.table th, .table td {
+    color: var(--text-color);
+}
+
+ul.custom-list li {
+    color: var(--text-color);
+}
+
+thead {
+    color: var(--background-color)
+}
+
+tr th {
+    color: var(--background-color)
+}
+
+button {
+    background: var(--primary-color);
+    color: var(--text-color)
+}
+
+.delete {
+    color: var(--secondary-color)
+}

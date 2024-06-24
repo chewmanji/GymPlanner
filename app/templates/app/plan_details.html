@@ -7,29 +7,37 @@
 <body>
 {% extends 'app/base.html' %}
 {% block content %}
-{% if trainings %}
-    <table>
-        <thead>
+    <h2>{{ plan.name }}</h2>
+    {% if trainings %}
+        <table>
+            <thead>
             <tr>
                 <th>Training</th>
                 <th>Type</th>
                 <th>Weekday</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             {% for training in trainings %}
                 <tr>
                     <td>{{ training.name }}</td>
                     <td>{{ training.type }}</td>
                     <td>{{ training.get_weekday_display }}</td>
-                    <td><a href="{% url 'app:training_details' training.id %}">Details</a></td>
+                    <td>
+                        <a href="{% url 'app:training_details' training.id %}">Details</a>
+                    </td>
+                    <td>
+                        <a class="delete"
+                           href="{% url 'app:remove_training_from_plan' plan.id training.id %}">Remove</a>
+                    </td>
                 </tr>
             {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>You haven't added any trainings to the plan yet.</p>
-{% endif %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You haven't added any trainings to the plan yet.</p>
+    {% endif %}
+    <a href="{% url 'app:trainings' %}">Add training</a>
 {% endblock content %}
 </body>
 </html>

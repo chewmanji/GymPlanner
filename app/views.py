@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DeleteView
 from .models import Exercise, UserExercise, Training, Plan
 from django.contrib.auth import logout
 from django.contrib import messages
@@ -29,6 +29,12 @@ def profile(request):
 
 
 @login_required
+def user_exercises(request):
+    user_exercises = UserExercise.objects.filter(user=request.user)
+    return render(request, 'app/userexercise_list.html', {'user_exercises': user_exercises})
+
+
+@login_required
 def trainings(request):
     trainings = Training.objects.filter(user=request.user)
     return render(request, 'app/trainings.html', {"trainings": trainings})
@@ -44,14 +50,33 @@ def training_details(request, training_id):
     return render(request, 'app/training_details.html', context)
 
 
+def remove_userexercise_from_training(request, training_id, userexercise_id):
+    user_exercise = get_object_or_404(UserExercise, pk=userexercise_id)
+    if request.user != user_exercise.user:
+        return HttpResponseForbidden("You do not have permission to remove this exercise.")
+
+    user_exercise.training = None
+    user_exercise.save()
+    return training_details(request, training_id)
+
+
 @login_required
 def plan_details(request, plan_id):
     plan = get_object_or_404(Plan, pk=plan_id)
     if request.user != plan.user:
         return HttpResponseForbidden("You do not have permission to view this plan.")
     trainings = Training.objects.filter(plan=plan_id)
-    context = {"trainings": trainings}
+    context = {"trainings": trainings, "plan": plan}
     return render(request, 'app/plan_details.html', context)
+
+
+def remove_training_from_plan(request, plan_id, training_id):
+    training = get_object_or_404(Training, pk=training_id)
+    if request.user != training.user:
+        return HttpResponseForbidden("You do not have permission to remove this training.")
+    training.plan = None
+    training.save()
+    return plan_details(request, plan_id)
 
 
 @login_required
@@ -62,7 +87,9 @@ def plans(request):
 
 def exercises(request):
     exercises_list = Exercise.objects.all()
-    context = {"exercises": exercises_list}
+    context = {
+        'exercises': exercises_list,
+    }
     return render(request, 'app/exercise_list.html', context)
 
 
@@ -126,15 +153,32 @@ class UpdateUserExercise(LoginRequiredMixin, UpdateView):
         return form
 
 
+class DeleteUserExercise(LoginRequiredMixin, DeleteView):
+    model = UserExercise
+    success_url = reverse_lazy('app:userexercise_list')
+
+
 class CreateTraining(LoginRequiredMixin, CreateView):
     model = Training
     success_url = reverse_lazy('app:trainings')
-    fields = ['name', 'weekday', 'type']
+    fields = ['name', 'weekday', 'type', 'plan']
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         messages.success(self.request, 'Training created successfully!')
         return super().form_valid(form)
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['plan'].queryset = Plan.objects.filter(user=self.request.user)
+        return form
+
+    def get_initial(self):
+        initial = super().get_initial()
+        training_id = self.kwargs.get('training_id')
+        if training_id:
+            initial['training'] = get_object_or_404(Training, id=training_id)
+        return initial
 
 
 class UpdateTraining(LoginRequiredMixin, UpdateView):
@@ -152,6 +196,24 @@ class UpdateTraining(LoginRequiredMixin, UpdateView):
         form.fields['plan'].queryset = Plan.objects.filter(user=self.request.user)
         return form
 
+    def get_initial(self):
+        initial = super().get_initial()
+        training_id = self.kwargs.get('training_id')
+        if training_id:
+            initial['training'] = get_object_or_404(Training, id=training_id)
+        return initial
+
+
+class DeleteTraining(LoginRequiredMixin, DeleteView):
+    model = Training
+
+    def get_success_url(self):
+        plan_id = self.object.plan_id
+        if plan_id:
+            return reverse_lazy('app:plan_details', kwargs={'plan_id': plan_id})
+        else:
+            return reverse_lazy('app:trainings')
+
 
 class CreatePlan(LoginRequiredMixin, CreateView):
     model = Plan
@@ -161,10 +223,10 @@ class CreatePlan(LoginRequiredMixin, CreateView):
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         form.fields['start_date'].widget.attrs.update({
-            'placeholder': 'Day/Month/Year'
+            'placeholder': 'Month/Day/Year'
         })
         form.fields['end_date'].widget.attrs.update({
-            'placeholder': 'Day/Month/Year'
+            'placeholder': 'Month/Day/Year'
         })
         return form
 
@@ -172,3 +234,36 @@ class CreatePlan(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         messages.success(self.request, 'Plan created successfully!')
         return super().form_valid(form)
+
+
+class UpdatePlan(LoginRequiredMixin, UpdateView):
+    model = Plan
+    success_url = reverse_lazy('app:plans')
+    fields = ['name', 'start_date', 'end_date', 'goals']
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['start_date'].widget.attrs.update({
+            'placeholder': 'Month/Day/Year'
+        })
+        form.fields['end_date'].widget.attrs.update({
+            'placeholder': 'Month/Day/Year'
+        })
+        return form
+
+    def get_initial(self):
+        initial = super().get_initial()
+        plan_id = self.kwargs.get('plan_id')
+        if plan_id:
+            initial['plan'] = get_object_or_404(Training, id=plan_id)
+        return initial
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, 'Plan created successfully!')
+        return super().form_valid(form)
+
+
+class DeletePlan(LoginRequiredMixin, DeleteView):
+    model = Plan
+    success_url = reverse_lazy('app:plans')

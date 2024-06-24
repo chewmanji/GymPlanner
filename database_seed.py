@@ -1,4 +1,6 @@
 import os
+import sys
+
 import django
 import numpy as np
 
@@ -15,21 +17,10 @@ from app.youtube_utils import get_youtube_video_url
 
 load_dotenv()
 YT_API_KEY = os.getenv('YOUTUBE_API_KEY')
+DATASET_PATH = os.getenv('DATASET_PATH')
 
 
-def seed_exercises_with_urls(filepath):
-    exercises = pd.read_excel(filepath, sheet_name=None)
-    for sheet_name, sheet in exercises.items():
-        sheet = sheet.drop_duplicates(subset=['Exercise_Name'])
-
-        for name, target_muscle, equipment in zip(sheet['Exercise_Name'], sheet['muscle_gp'], sheet['Equipment']):
-            equipment = equipment if type(equipment) is not float else None  # nan values to None so NULL is in DB
-            yt_url = get_youtube_video_url(name, YT_API_KEY)
-            ex = Exercise(name=name, target_muscle=target_muscle, equipment=equipment, youtube_url=yt_url)
-
-            ex.save()
-
-def seed_exercises_with(filepath):
+def seed_exercises(filepath):
     exercises = pd.read_excel(filepath, sheet_name=None)
     existing_exercise_names = set(Exercise.objects.values_list('name', flat=True))
     for sheet_name, sheet in exercises.items():
@@ -42,8 +33,18 @@ def seed_exercises_with(filepath):
                 ex.save()
 
 
+def update_exercises_url():
+    ex_to_update = Exercise.objects.filter(youtube_url=None)
+    for ex in ex_to_update:
+        if ex.youtube_url is None:
+            try:
+                ex.youtube_url = get_youtube_video_url(ex.name, YT_API_KEY)
+                ex.save()
+            except Exception as e:
+                print("Quotas exceeded for today! Exiting...")
+                print(f"Error: {e}")
+                sys.exit(1)
+
 
 if __name__ == "__main__":
-    #Exercise.objects.all().delete()
-    #seed_exercises_with_urls("C:\\Users\\wojte\\PycharmProjects\\GymPlanner\\Gym Exercises Dataset.xlsx")
-    seed_exercises_with("C:\\Users\\wojte\\PycharmProjects\\GymPlanner\\Gym Exercises Dataset.xlsx")
+    update_exercises_url()

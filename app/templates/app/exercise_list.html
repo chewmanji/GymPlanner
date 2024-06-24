@@ -13,8 +13,9 @@
                 <li>
                     <a href="{% url 'app:exercise_detail' ex.id %}">{{ ex.name }}</a>
                     {% if user.is_authenticated %}
-                        <a href="{% url 'app:create_userexercise' ex.id %}">Create your
-                            variant </a>
+{#                        <a href="{% url 'app:create_userexercise' ex.id %}">Create your#}
+{#                            variant </a>#}
+                        <button type="button"  onclick="location.href='{% url 'app:create_userexercise' ex.id %}'">Create your variant</button>
                     {% endif %}
                 </li>
             {% endfor %}
